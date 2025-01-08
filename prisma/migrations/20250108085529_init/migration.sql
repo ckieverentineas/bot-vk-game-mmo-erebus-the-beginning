@@ -1,0 +1,202 @@
+-- CreateTable
+CREATE TABLE "User" (
+    "id" INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
+    "idvk" INTEGER NOT NULL,
+    "name" TEXT NOT NULL,
+    "status" TEXT NOT NULL DEFAULT 'player',
+    "id_corporation" INTEGER NOT NULL DEFAULT 0,
+    "crdate" DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "update" DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP
+);
+
+-- CreateTable
+CREATE TABLE "Person" (
+    "id" INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
+    "idvk" INTEGER NOT NULL,
+    "name" TEXT NOT NULL,
+    "strength" REAL NOT NULL,
+    "endurance" REAL NOT NULL,
+    "endurance_current" REAL NOT NULL,
+    "health" REAL NOT NULL,
+    "health_current" REAL NOT NULL,
+    "erudition" REAL NOT NULL,
+    "charisma" REAL NOT NULL,
+    "synchronization" REAL NOT NULL,
+    "karma" REAL NOT NULL,
+    "intuition" REAL NOT NULL,
+    "psyche" REAL NOT NULL,
+    "stealth" REAL NOT NULL,
+    "id_user" INTEGER NOT NULL,
+    CONSTRAINT "Person_id_user_fkey" FOREIGN KEY ("id_user") REFERENCES "User" ("id") ON DELETE CASCADE ON UPDATE CASCADE
+);
+
+-- CreateTable
+CREATE TABLE "Resource" (
+    "id" INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
+    "gold" REAL NOT NULL DEFAULT 5000,
+    "iron" REAL NOT NULL DEFAULT 500,
+    "crystal" INTEGER NOT NULL DEFAULT 0,
+    "energy" REAL NOT NULL DEFAULT 1000,
+    "research" REAL NOT NULL DEFAULT 0,
+    "reputation" REAL NOT NULL DEFAULT 0,
+    "id_user" INTEGER NOT NULL,
+    CONSTRAINT "Resource_id_user_fkey" FOREIGN KEY ("id_user") REFERENCES "User" ("id") ON DELETE CASCADE ON UPDATE CASCADE
+);
+
+-- CreateTable
+CREATE TABLE "System" (
+    "id" INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
+    "name" TEXT NOT NULL,
+    "planet" REAL NOT NULL
+);
+
+-- CreateTable
+CREATE TABLE "Planet" (
+    "id" INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
+    "name" TEXT NOT NULL,
+    "coal" REAL NOT NULL,
+    "gas" REAL NOT NULL,
+    "oil" REAL NOT NULL,
+    "uranium" REAL NOT NULL,
+    "iron" REAL NOT NULL,
+    "golden" REAL NOT NULL,
+    "crystal" REAL NOT NULL,
+    "build" INTEGER NOT NULL DEFAULT 7,
+    "artefact" REAL NOT NULL,
+    "id_user" INTEGER,
+    "id_system" INTEGER NOT NULL,
+    "crdate" DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "update" DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    CONSTRAINT "Planet_id_system_fkey" FOREIGN KEY ("id_system") REFERENCES "System" ("id") ON DELETE CASCADE ON UPDATE CASCADE
+);
+
+-- CreateTable
+CREATE TABLE "Builder" (
+    "id" INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
+    "name" TEXT NOT NULL,
+    "lvl" INTEGER NOT NULL DEFAULT 1,
+    "cost" TEXT,
+    "input" TEXT,
+    "storage" TEXT,
+    "output" TEXT,
+    "require" TEXT,
+    "id_user" INTEGER NOT NULL,
+    "id_planet" INTEGER,
+    "crdate" DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "update" DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    CONSTRAINT "Builder_id_user_fkey" FOREIGN KEY ("id_user") REFERENCES "User" ("id") ON DELETE CASCADE ON UPDATE CASCADE
+);
+
+-- CreateTable
+CREATE TABLE "Corporation_Builder" (
+    "id" INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
+    "name" TEXT NOT NULL,
+    "lvl" INTEGER NOT NULL DEFAULT 1,
+    "type" TEXT NOT NULL,
+    "income" REAL NOT NULL DEFAULT 1,
+    "cost" REAL NOT NULL DEFAULT 100,
+    "worker" INTEGER NOT NULL DEFAULT 1,
+    "id_corporation" INTEGER NOT NULL,
+    "crdate" DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "update" DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    CONSTRAINT "Corporation_Builder_id_corporation_fkey" FOREIGN KEY ("id_corporation") REFERENCES "Corporation" ("id") ON DELETE CASCADE ON UPDATE CASCADE
+);
+
+-- CreateTable
+CREATE TABLE "Worker" (
+    "id" INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
+    "name" TEXT NOT NULL,
+    "lvl" INTEGER NOT NULL DEFAULT 1,
+    "xp" REAL NOT NULL DEFAULT 0,
+    "income" REAL NOT NULL DEFAULT 0,
+    "speed" REAL NOT NULL DEFAULT 1,
+    "salary" REAL NOT NULL DEFAULT 1,
+    "gold" REAL NOT NULL DEFAULT 0,
+    "reputation" REAL NOT NULL DEFAULT 0,
+    "point" INTEGER NOT NULL DEFAULT 0,
+    "id_user" INTEGER NOT NULL,
+    "id_builder" INTEGER,
+    "id_planet" INTEGER,
+    "crdate" DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "update" DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    CONSTRAINT "Worker_id_user_fkey" FOREIGN KEY ("id_user") REFERENCES "User" ("id") ON DELETE CASCADE ON UPDATE CASCADE
+);
+
+-- CreateTable
+CREATE TABLE "Corporation" (
+    "id" INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
+    "id_user" INTEGER NOT NULL,
+    "name" TEXT NOT NULL,
+    "lvl" INTEGER NOT NULL DEFAULT 1,
+    "xp" REAL NOT NULL DEFAULT 0,
+    "gold" REAL NOT NULL DEFAULT 1750,
+    "energy" REAL NOT NULL DEFAULT 1750,
+    "reputation" REAL NOT NULL DEFAULT 0,
+    "member" INTEGER NOT NULL DEFAULT 6,
+    "crdate" DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "update" DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP
+);
+
+-- CreateTable
+CREATE TABLE "Trigger" (
+    "id" INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
+    "name" TEXT NOT NULL,
+    "value" BOOLEAN NOT NULL DEFAULT false,
+    "id_user" INTEGER NOT NULL,
+    "crdate" DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "update" DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    CONSTRAINT "Trigger_id_user_fkey" FOREIGN KEY ("id_user") REFERENCES "User" ("id") ON DELETE CASCADE ON UPDATE CASCADE
+);
+
+-- CreateTable
+CREATE TABLE "Analyzer" (
+    "id" INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
+    "energy" REAL NOT NULL DEFAULT 0,
+    "gold" REAL NOT NULL DEFAULT 0,
+    "gold_from" REAL NOT NULL DEFAULT 0,
+    "gold_to" REAL NOT NULL DEFAULT 0,
+    "xp" REAL NOT NULL DEFAULT 0,
+    "point" INTEGER NOT NULL DEFAULT 0,
+    "id_user" INTEGER NOT NULL,
+    "crdate" DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    CONSTRAINT "Analyzer_id_user_fkey" FOREIGN KEY ("id_user") REFERENCES "User" ("id") ON DELETE CASCADE ON UPDATE CASCADE
+);
+
+-- CreateTable
+CREATE TABLE "Research" (
+    "id" INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
+    "name" TEXT NOT NULL,
+    "lvl" INTEGER NOT NULL,
+    "id_user" INTEGER NOT NULL,
+    "crdate" DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "update" DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    CONSTRAINT "Research_id_user_fkey" FOREIGN KEY ("id_user") REFERENCES "User" ("id") ON DELETE CASCADE ON UPDATE CASCADE
+);
+
+-- CreateTable
+CREATE TABLE "Statistics" (
+    "id" INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
+    "all" TEXT NOT NULL,
+    "day" TEXT NOT NULL,
+    "week" TEXT NOT NULL,
+    "month" TEXT NOT NULL,
+    "id_user" INTEGER NOT NULL,
+    "crdate" DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "update" DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    CONSTRAINT "Statistics_id_user_fkey" FOREIGN KEY ("id_user") REFERENCES "User" ("id") ON DELETE CASCADE ON UPDATE CASCADE
+);
+
+-- CreateTable
+CREATE TABLE "Boss" (
+    "id" INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
+    "id_post" INTEGER NOT NULL,
+    "name" TEXT NOT NULL,
+    "description" TEXT NOT NULL,
+    "hp" REAL NOT NULL,
+    "artefact" REAL NOT NULL,
+    "crystal" REAL NOT NULL,
+    "stat" TEXT NOT NULL DEFAULT '[]',
+    "defeat" BOOLEAN NOT NULL DEFAULT false,
+    "crdate" DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "update" DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP
+);
