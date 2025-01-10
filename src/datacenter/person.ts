@@ -127,16 +127,16 @@ export function Printer_Person_Class(id: number): string {
         ${smile_list.message.ico} Описание: ${character.description}
         🎯 Активный навык: ${character.skill_active}
         🔒 Пассивный навык: ${character.skill_passive}
-        ${smile_list.strength.ico} Сила: ${character.strength}
-        ${smile_list.endurance.ico} Выносливость: ${character.endurance}
-        ${smile_list.health.ico} Здоровье: ${character.health}
-        ${smile_list.erudition.ico} Эрудиция: ${character.erudition}
-        ${smile_list.charisma.ico} Харизма: ${character.charisma}
-        ${smile_list.synchronization.ico} Синхронизация: ${character.synchronization}
-        ${smile_list.karma.ico} Карма: ${character.karma}
-        ${smile_list.intuition.ico} Интуиция: ${character.intuition}
-        ${smile_list.psyche.ico} Психика: ${character.psyche}
-        ${smile_list.stealth.ico} Скрытность: ${character.stealth}
+        ${smile_list.strength.ico} ${smile_list.strength.name}: ${character.strength}
+        ${smile_list.endurance.ico} ${smile_list.endurance.name}: ${character.endurance}
+        ${smile_list.health.ico} ${smile_list.health.name}: ${character.health}
+        ${smile_list.erudition.ico} ${smile_list.erudition.name}: ${character.erudition}
+        ${smile_list.charisma.ico} ${smile_list.charisma.name}: ${character.charisma}
+        ${smile_list.synchronization.ico} ${smile_list.synchronization.name}: ${character.synchronization}
+        ${smile_list.karma.ico} ${smile_list.karma.name}: ${character.karma}
+        ${smile_list.intuition.ico} ${smile_list.intuition.name}: ${character.intuition}
+        ${smile_list.psyche.ico} ${smile_list.psyche.name}: ${character.psyche}
+        ${smile_list.stealth.ico} ${smile_list.stealth.name}: ${character.stealth}
     `;
 }
 
