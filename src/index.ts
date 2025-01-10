@@ -2,7 +2,7 @@ import { HearManager } from "@vk-io/hear";
 import { Context, VK } from "vk-io";
 import QuestionManager, { IQuestionMessageContext } from "vk-io-question";
 import prisma from "./module/prisma";
-import { User_Register } from "./module/game/account/tutorial";
+import { Dialog_Engine, User_Register } from "./module/game/account/tutorial";
 import { Main_Menu, Main_Menu_Close, User_Menu_Show } from "./module/game/account/control";
 import { Builder_Control, Builder_Control_Multi, Builder_Controller } from "./module/game/player/builder3";
 import * as dotenv from 'dotenv';
@@ -210,6 +210,7 @@ vk.updates.on('message_event', async (context: Context, next: any) => {
 	//await Sleep(4000)
 	console.log(`${context.eventPayload.command} > ${JSON.stringify(context.eventPayload)}`)
 	const config: any = {
+		"dialog_engine": Dialog_Engine,
 		"main_menu": Main_Menu,
 		"main_menu_close": Main_Menu_Close,
 		"main_menu_corporation": Main_Menu_Corporation,
