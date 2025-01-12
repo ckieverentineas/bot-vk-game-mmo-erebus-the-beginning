@@ -4,7 +4,6 @@ import QuestionManager, { IQuestionMessageContext } from "vk-io-question";
 import prisma from "./module/prisma";
 import { Dialog_Engine, User_Register } from "./module/game/account/tutorial";
 import { Main_Menu, Main_Menu_Close, User_Menu_Show } from "./module/game/account/control";
-import { Builder_Control, Builder_Control_Multi, Builder_Controller } from "./module/game/player/builder3";
 import * as dotenv from 'dotenv';
 import { registerUserRoutes } from "./player";
 import { Rand_Int } from "./module/fab/random";
@@ -214,9 +213,6 @@ vk.updates.on('message_event', async (context: Context, next: any) => {
 		"main_menu": Main_Menu,
 		"main_menu_close": Main_Menu_Close,
 		"main_menu_corporation": Main_Menu_Corporation,
-		"builder_control": Builder_Control,
-		"builder_control_multi": Builder_Control_Multi,
-		"builder_controller": Builder_Controller,
 		"corporation_controller": Corporation_Controller,
 		"builder_control_corporation": Builder_Control_Corporation,
 		"builder_controller_corporation": Builder_Controller_Corporation,

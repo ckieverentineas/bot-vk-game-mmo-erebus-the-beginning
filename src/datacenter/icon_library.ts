@@ -7,7 +7,8 @@ type IconKey = 'save' | 'load' | 'time' | 'delete' | 'success' | 'attach' | 'que
                | 'captain' | 'explorer' | 'warrior' | 'pilot' | 'engineer' |// классы
                'strength' | 'endurance' | 'health' | 'erudition' | 'charisma' | 'synchronization' | 'karma' | 'intuition' | 'psyche' | 'stealth' | // статы
                'target'|
-               'coal' | 'iron_ore' | 'iron' | 'gold_ore' | 'artefact' | 'energy' |'gold'; // ресурсы
+               'coal' | 'iron_ore' | 'iron' | 'gold_ore' | 'artefact' | 'energy' |'gold' | // ресурсы
+               "ammo" ; //амуниция
 
 export const smile_list: { [key in IconKey]: { ico: string, name: string } } = {
     //классы
@@ -28,6 +29,10 @@ export const smile_list: { [key in IconKey]: { ico: string, name: string } } = {
     'intuition': { name: 'Интуиция', ico: '🔮' },
     'psyche': { name: 'Психика', ico: '🧠' },
     'stealth': { name: 'Скрытность', ico: '👤' },
+    //материалы
+    'iron': { name: 'Железо', ico: '📏'},
+    'energy': { name: 'Энергия', ico: '⚡'},
+    'gold': { name: 'Шекели', ico: '💰'},
     //ресурсы
     'coal': {name: 'Уголь', ico: '⬛'},
     //'gas': {name: 'Газ', ico: '⏹'},
@@ -36,15 +41,15 @@ export const smile_list: { [key in IconKey]: { ico: string, name: string } } = {
     //'turf': {name: 'Торф', ico: '🟧'},
     //'uranium': {name: 'Ураниум', ico: '🟩'},
     'iron_ore': {name: 'Железная руда', ico: '⚪'},
-    'iron': { name: 'Железо', ico: '📏'},
     'gold_ore': {name: 'Золото', ico: '🟡'},
     'artefact': {name: 'Артефакт', ico: '⚱️'},
     //'crystal': {name: 'Караты', ico: '💎'},
     //'worker': { name: 'Рабочие', ico: '👥'},
-    'energy': { name: 'Энергия', ico: '⚡'},
-    'gold': { name: 'Шекели', ico: '💰'},
+    
     //'research': { name: 'Очки исследований', ico: '🧪'},
     //'crystal_dirt': { name: 'Караты неочищенные', ico: '💠'},
+    //амуниция
+    "ammo": { name: 'Патроны', ico: '🕋' },
     //
     'target': { name: '', ico: '🎯' },
     'save': { name: '', ico: '💾' },

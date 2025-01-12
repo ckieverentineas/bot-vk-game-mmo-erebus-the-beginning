@@ -6,6 +6,8 @@ import { Printer_Person_Class, Selector_Person_Class } from "../../../datacenter
 import { smile_list } from "../../../datacenter/icon_library";
 import { Printer_Person_Stat_Info } from "../../../datacenter/character";
 import { dialog_engine, DialogElement } from "../../../datacenter/dialog";
+import { User } from "@prisma/client";
+import { blueprint_database, BlueprintKey } from "../../../datacenter/blueprint";
 
 export async function User_Register(context: Context) {
     const account_temp = { name: null, class: 1 }
@@ -85,8 +87,57 @@ export async function User_Register(context: Context) {
     //await User_Menu_Show(context, save)
 }
 
-export async function Dialog_Engine(context: Context) {
+export async function Dialog_Engine(context: Context, user: User) {
     const id_dialog: string = context.eventPayload.id_event
     const dialog: DialogElement = dialog_engine[`${id_dialog}`]
+    const config: { [event: string]: (context: Context, user: User) => Promise<string> } = {
+        'event_destruct_escape_pod': Event_Destruct_Escape_Pod
+    }
+    if (dialog.event) {
+        dialog.text += await config[dialog.event](context, user)
+    }
     await Send_Message_Universal(context.peerId, dialog.text, dialog.keyboard, dialog.image)
+}
+
+async function Event_Destruct_Escape_Pod(context: Context, user: User) {
+    // начисляем ресурсы с разбора спасательной капсулы
+    const iron_default = 500
+    const gold_default = 5000
+    const energy_default = 10000
+    const ammo_turret_default = 1000
+    let event_logger = `Получены и найдены следующие предметы:\n\n`
+    let resource_check = await prisma.resource.findFirst({ where: { id_user: user.id } })
+    if (!resource_check) {
+        resource_check = await prisma.resource.create({ data: { id_user: user.id, gold: gold_default, iron: iron_default, energy: energy_default } })
+        if (!resource_check) { return '' }
+        event_logger += `${smile_list.gold.ico} Шекель: х${gold_default}\n${smile_list.iron.ico} Железо: х${iron_default}\n${smile_list.energy.ico} Энергия: х${energy_default}\n`
+    }
+    let ammo_check = await prisma.ammo.findFirst({ where: { id_user: user.id } })
+    if (!ammo_check) {
+        ammo_check = await prisma.ammo.create({ data: { id_user: user.id, ammo_turret: ammo_turret_default } })
+        if (!ammo_check) { return '' }
+        event_logger += `${smile_list.ammo.ico} Патроны для Турели: х${ammo_turret_default}\n`
+    }
+    // добавляем игроку чертежи строительства
+    const bp_mine_add = await prisma.blueprint.create({ data: { id_user: user.id, system_name: blueprint_database.mine.system_name, type: blueprint_database.mine.type, lvl: blueprint_database.mine.lvl } })
+    if (!bp_mine_add) { return event_logger }
+    event_logger += await Printer_Blueprint('mine')
+    const bp_fabricator_add = await prisma.blueprint.create({ data: { id_user: user.id, system_name: blueprint_database.fabricator.system_name, type: blueprint_database.fabricator.type, lvl: blueprint_database.fabricator.lvl } })
+    if (!bp_fabricator_add) { return event_logger }
+    event_logger += await Printer_Blueprint('fabricator')
+    const bp_base_add = await prisma.blueprint.create({ data: { id_user: user.id, system_name: blueprint_database.base.system_name, type: blueprint_database.base.type, lvl: blueprint_database.base.lvl } })
+    if (!bp_base_add) { return event_logger }
+    event_logger += await Printer_Blueprint('base')
+    const bp_turret_add = await prisma.blueprint.create({ data: { id_user: user.id, system_name: blueprint_database.turret.system_name, type: blueprint_database.turret.type, lvl: blueprint_database.turret.lvl } })
+    if (!bp_turret_add) { return event_logger }
+    event_logger += await Printer_Blueprint('turret')
+    const bp_cloning_station_add = await prisma.blueprint.create({ data: { id_user: user.id, system_name: blueprint_database.cloning_station.system_name, type: blueprint_database.cloning_station.type, lvl: blueprint_database.cloning_station.lvl } })
+    if (!bp_cloning_station_add) { return event_logger }
+    event_logger += await Printer_Blueprint('cloning_station')
+    await Logger(`(destroyed escaped pod succed) - got resources and blueprints ~ by @${context.senderId}`)
+    return event_logger
+}
+
+async function Printer_Blueprint(system_name: BlueprintKey) {
+    return `${smile_list.save.ico} Чертеж(B): ${blueprint_database[`${system_name}`].name}-${blueprint_database[`${system_name}`].lvl}: х1\n`
 }

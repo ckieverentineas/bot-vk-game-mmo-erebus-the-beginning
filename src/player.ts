@@ -513,7 +513,7 @@ export function registerUserRoutes(hearManager: HearManager<IQuestionMessageCont
                 } else {
                     const storage_init = builder_config[builder.name].storage ? builder_config[builder.name].storage : null
                     if (storage_init) {
-                        await prisma.builder.update({ where: { id: builder.id }, data: { storage: JSON.stringify(storage_init) } })
+                        //await prisma.builder.update({ where: { id: builder.id }, data: { storage: JSON.stringify(storage_init) } })
                         change_will++
                     }
                 }

@@ -18,6 +18,8 @@ model User {
   Person Person[]
   Resource Resource[]
   Bulder         Builder[]
+  Blueprint      Blueprint[]
+  Ammo           Ammo[]
   Worker         Worker[]
   Trigger        Trigger[]
   Analyzer       Analyzer[]
@@ -47,55 +49,56 @@ model Person {
 
 model Resource {
   id            Int          @id @default(autoincrement())
-  gold           Float        @default(5000)
-  iron           Float        @default(500)
-  crystal        Int          @default(0)
-  energy         Float        @default(1000)
-  research       Float        @default(0)
-  reputation     Float        @default(0)
+  coal          Float        @default(0)
+  iron_ore      Float        @default(0)
+  iron          Float
+  gold_ore      Float        @default(0)
+  artefact      Float        @default(0)
+  energy        Float
+  gold          Float
+  people        Int          @default(5)
+  crystal       Int          @default(0)
   id_user    Int
   user       User     @relation(fields: [id_user], references: [id], onDelete: Cascade, onUpdate: Cascade)
 }
 
-model System {
-  id     Int      @id @default(autoincrement())
-  name   String
-  planet Float
-  Planet Planet[]
+model Blueprint {
+  id         Int          @id @default(autoincrement())
+  system_name       String
+  lvl        Int
+  type       String
+  id_user    Int
+  crdate     DateTime @default(now())
+  update     DateTime @default(now())
+  user       User     @relation(fields: [id_user], references: [id], onDelete: Cascade, onUpdate: Cascade)
+}
+
+model Ammo {
+  id         Int          @id @default(autoincrement())
+  ammo_turret Int
+  id_user    Int
+  user       User     @relation(fields: [id_user], references: [id], onDelete: Cascade, onUpdate: Cascade)
 }
 
 model Planet {
   id   Int    @id @default(autoincrement())
   name String
-
-  coal    Float
-  gas     Float
-  oil     Float
-  uranium Float
-
-  iron    Float
-  golden  Float
-  crystal Float
-
-  build    Int   @default(7)
-  artefact Float
-
+  coal          Float
+  iron_ore      Float
+  gold_ore      Float
+  artefact      Float
   id_user   Int?
-  id_system Int
   crdate    DateTime @default(now())
   update    DateTime @default(now())
-  system    System   @relation(fields: [id_system], references: [id], onDelete: Cascade, onUpdate: Cascade)
 }
 
 model Builder {
   id         Int      @id @default(autoincrement())
   name       String
   lvl        Int      @default(1)
-  cost String?
-  input String?
-  storage String?
-  output String?
-  require String?
+  gold       Float    @default(0)
+  iron       Float    @default(0)
+  people     Int      @default(0)
   id_user    Int
   id_planet  Int?
   crdate     DateTime @default(now())

@@ -297,8 +297,8 @@ export async function Printer_Builder_Config(name: string, lvl_be: number, user:
     }
     if (builder_configs[i].storage) {
         if (id_builder) {
-            const buildstore = await prisma.builder.findFirst({ where: { id: id_builder } })
-            if (buildstore && buildstore.storage) { builder_configs[i].storage = JSON.parse(buildstore.storage) }
+            /*const buildstore = await prisma.builder.findFirst({ where: { id: id_builder } })
+            if (buildstore && buildstore.storage) { builder_configs[i].storage = JSON.parse(buildstore.storage) }*/
         }
         event_logger += `\n\n📦 Хранилище: `
         event_logger += `${builder_configs[i].storage?.gold != undefined ? `\n${icotransl_list[builder_configs[i].storage!.gold.name].smile} ${icotransl_list[builder_configs[i].storage!.gold.name].name}: ${builder_configs[i].storage!.gold.count.toFixed(2)}/${(builder_configs[i].storage!.gold.limit*((lvl)**builder_configs[i].storage!.gold.koef_limit)).toFixed(0)}` : ""}`
