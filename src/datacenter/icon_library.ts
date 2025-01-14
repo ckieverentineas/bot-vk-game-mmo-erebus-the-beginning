@@ -8,7 +8,8 @@ type IconKey = 'save' | 'load' | 'time' | 'delete' | 'success' | 'attach' | 'que
                'strength' | 'endurance' | 'health' | 'erudition' | 'charisma' | 'synchronization' | 'karma' | 'intuition' | 'psyche' | 'stealth' | // статы
                'target'|
                'coal' | 'iron_ore' | 'iron' | 'gold_ore' | 'artefact' | 'energy' |'gold' | // ресурсы
-               "ammo" ; //амуниция
+               "ammo" | //амуниция
+               'planet';
 
 export const smile_list: { [key in IconKey]: { ico: string, name: string } } = {
     //классы
@@ -51,6 +52,7 @@ export const smile_list: { [key in IconKey]: { ico: string, name: string } } = {
     //амуниция
     "ammo": { name: 'Патроны', ico: '🕋' },
     //
+    'planet': { name: '', ico: '🌍' },
     'target': { name: '', ico: '🎯' },
     'save': { name: '', ico: '💾' },
     'add': { name: '', ico: '➕' },

@@ -8,6 +8,7 @@ import { Printer_Person_Stat_Info } from "../../../datacenter/character";
 import { dialog_engine, DialogElement } from "../../../datacenter/dialog";
 import { User } from "@prisma/client";
 import { blueprint_database, BlueprintKey } from "../../../datacenter/blueprint";
+import { Randomizer_Float } from "../../../module/fab/random";
 
 export async function User_Register(context: Context) {
     const account_temp = { name: null, class: 1 }
@@ -91,7 +92,9 @@ export async function Dialog_Engine(context: Context, user: User) {
     const id_dialog: string = context.eventPayload.id_event
     const dialog: DialogElement = dialog_engine[`${id_dialog}`]
     const config: { [event: string]: (context: Context, user: User) => Promise<string> } = {
-        'event_destruct_escape_pod': Event_Destruct_Escape_Pod
+        'event_generate_first_visit_planet': Event_Generate_First_Visit_Planet,
+        'event_destruct_escape_pod': Event_Destruct_Escape_Pod,
+        
     }
     if (dialog.event) {
         dialog.text += await config[dialog.event](context, user)
@@ -99,6 +102,27 @@ export async function Dialog_Engine(context: Context, user: User) {
     await Send_Message_Universal(context.peerId, dialog.text, dialog.keyboard, dialog.image)
 }
 
+async function Event_Generate_First_Visit_Planet(context: Context, user: User) {
+    let event_logger = ''
+    const mulmin = 5
+    const mulmax = 3
+    const planet_check = await prisma.planet.findFirst({ where: { id_user: user.id } })
+    if (planet_check) { return '' }
+    const planet_init = await prisma.planet.create({ data: { 
+        id_user: user.id, name: "Новый Эдем", 
+        coal: await Randomizer_Float(1000000*mulmin, 1000000*mulmin*mulmax), 
+        //gas: await Randomizer_Float(50000*mulmin, 50000*mulmin*mulmax), 
+        //oil: await Randomizer_Float(25000*mulmin, 25000*mulmin*mulmax), 
+        //uranium: await Randomizer_Float(1000*mulmin, 1000*mulmin*mulmax),
+        iron_ore: await Randomizer_Float(1000000*mulmin, 1000000*mulmin*mulmax),
+        gold_ore: await Randomizer_Float(1000000*mulmin, 1000000*mulmin*mulmax),
+        artefact: Math.floor(await Randomizer_Float(100*mulmin, 100*mulmin*mulmax)),
+        //crystal: Math.floor(await Randomizer_Float(1, 25)),
+    } })
+    await Logger(`(generate_first_visit_planet succes) - got planet for research ~ by @${context.peerId}`)
+    event_logger = `\n\n${smile_list.planet.ico} Обнаружена новая планета: ${planet_init.name}\n\n`
+    return event_logger
+}
 async function Event_Destruct_Escape_Pod(context: Context, user: User) {
     // начисляем ресурсы с разбора спасательной капсулы
     const iron_default = 500
@@ -134,7 +158,7 @@ async function Event_Destruct_Escape_Pod(context: Context, user: User) {
     const bp_cloning_station_add = await prisma.blueprint.create({ data: { id_user: user.id, system_name: blueprint_database.cloning_station.system_name, type: blueprint_database.cloning_station.type, lvl: blueprint_database.cloning_station.lvl } })
     if (!bp_cloning_station_add) { return event_logger }
     event_logger += await Printer_Blueprint('cloning_station')
-    await Logger(`(destroyed escaped pod succed) - got resources and blueprints ~ by @${context.senderId}`)
+    await Logger(`(destroyed escaped pod succes) - got resources and blueprints ~ by @${context.peerId}`)
     return event_logger
 }
 
