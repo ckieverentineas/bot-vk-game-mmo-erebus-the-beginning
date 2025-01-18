@@ -9,7 +9,7 @@ type IconKey = 'save' | 'load' | 'time' | 'delete' | 'success' | 'attach' | 'que
                'target'|
                'coal' | 'iron_ore' | 'iron' | 'gold_ore' | 'artefact' | 'energy' |'gold' | // ресурсы
                "ammo" | //амуниция
-               'planet';
+               'planet' | "build" | "ruin" | 'inventory' | 'corporation' | 'research' | 'storehouse';
 
 export const smile_list: { [key in IconKey]: { ico: string, name: string } } = {
     //классы
@@ -51,9 +51,21 @@ export const smile_list: { [key in IconKey]: { ico: string, name: string } } = {
     //'crystal_dirt': { name: 'Караты неочищенные', ico: '💠'},
     //амуниция
     "ammo": { name: 'Патроны', ico: '🕋' },
+    // обозначения
+    "build": { name: 'Сооружение', ico: '🏛️' },
+    "ruin": { name: 'Руина', ico: '🗿' },
+    'planet': { name: 'Планета', ico: '🌍' },
+    'inventory': { name: 'Инвентарь', ico: '💼' },
+    'corporation': { name: 'Корпорация', ico: '🌐' },
+    'research': { name: 'Исследовать', ico: '🔎' },
+    'storehouse': { name: 'Склад', ico: '📦' },
+    'person': { name: '', ico: '👤' },
+    'persons': { name: '', ico: '👥' },
     //
-    'planet': { name: '', ico: '🌍' },
+    // параметры
+    'card': { name: '', ico: '💳' },
     'target': { name: '', ico: '🎯' },
+
     'save': { name: '', ico: '💾' },
     'add': { name: '', ico: '➕' },
     'edit': { name: '', ico: '✏' },
@@ -84,11 +96,10 @@ export const smile_list: { [key in IconKey]: { ico: string, name: string } } = {
     'change': { name: '', ico: '🔃' },
 
     'alliance': { name: '', ico: '🌐' },
-    'card': { name: '', ico: '💳' },
+    
     'cardg': { name: '', ico: '🕯' },
     'medal': { name: '', ico: '🔘' },
-    'person': { name: '', ico: '👤' },
-    'persons': { name: '', ico: '👥' },
+    
     'status': { name: '', ico: '👑' },
     'work': { name: '', ico: '🔨' },
     'facult': { name: '', ico: '🔮' }

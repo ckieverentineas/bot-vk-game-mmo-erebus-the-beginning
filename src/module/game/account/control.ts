@@ -1,37 +1,25 @@
-import { Builder, User } from "@prisma/client";
+import { Corporation, Planet, Resource, User } from "@prisma/client";
 import { Context, KeyboardBuilder } from "vk-io";
 import prisma from "../../prisma";
-import { builder_config } from "../datacenter/builder_config";
 import { Send_Message_Universal } from "../../../module/fab/helper";
+import { smile_list } from "../../../datacenter/icon_library";
 
 async function User_Info(user: User) {
-	//const corp: Corporation | null = await prisma.corporation.findFirst({ where: { id: user.id_corporation } })
-	const cities = await prisma.builder.findMany({ where: { id_user: user.id, name: "Города" } })
-	let worker_life_can = 0
-    for (const city of cities) {
-        worker_life_can += Math.floor(builder_config[city.name].storage!.worker.limit*((city.lvl)**builder_config[city.name].storage!.worker.koef_limit))
-        
-    }
-    // cчитаем количество рабочих, что живут на этой планете
-    //const worker_life = await prisma.worker.count({ where: { id_user: user.id } })
-    // считаем количество рабочих, что требуется для работы на этой планете 
-    let worker_need = 0
-    let worker_be = 0
-    const builder_on_planet: Builder[] = await prisma.builder.findMany({ where: { id_user: user.id } })
-    for (const builderplan of builder_on_planet) {
-        worker_need += Math.floor(builder_config[builderplan.name].require!.worker.limit*((builderplan.lvl)**builder_config[builderplan.name].require!.worker.koef))
-        worker_be += await prisma.worker.count({ where: { id_builder: builderplan.id, id_user: user.id } })
-    }
-    //let event_logger = `💬 Ваш бизнес, ${user.name}:\n💳 UID: ${user.id}\n🎥 Кремлевский номер: ${user.idvk}\n🌐 Корпорация: ${user.id_corporation == 0? 'Не в корпорации' : corp?.name}\n📈 Уровень: ${user.lvl}\n📗 Опыт: ${user.xp.toFixed(2)}\n💰 Шекели: ${user.gold.toFixed(2)}\n${icotransl_list['metal'].smile} ${icotransl_list['metal'].name}: ${user.iron.toFixed(2)}\n⚡ Энергия: ${user.energy.toFixed(2)}\n${icotransl_list['research'].smile} Очки исследования: ${user.research.toFixed(2)}\n💎 Караты: ${user.crystal}\n\n🏠 Население: ${worker_life}/${worker_life_can}\n👥 На работе: ${worker_be}/${worker_need}\n`
-	const event_logger = ''
+	const corp: Corporation | null = await prisma.corporation.findFirst({ where: { id: user.id_corporation } })
+	const planet: Planet | null = await prisma.planet.findFirst({ where: { id_user: user.id } })
+	const resource: Resource | null = await prisma.resource.findFirst({ where: { id_user: user.id } })
+    let event_logger = `${smile_list.message.ico} Игрок [${smile_list.person.ico} ${user.name}] вы сейчас находитесь на планете [${smile_list.planet.ico} ${planet?.name}]\n\n${smile_list.card.ico} UID карты: ${user.id}\n🌐 Корпорация: ${user.id_corporation == 0? 'Не в корпорации' : corp?.name}\n${smile_list.gold.ico} Шекели: ${resource?.gold.toFixed(2)}\n${smile_list.iron.ico} Железо: ${resource?.iron.toFixed(2)}\n${smile_list.energy.ico} Энергия: ${resource?.energy.toFixed(2)}\n`
 	const keyboard = new KeyboardBuilder()
-	keyboard.callbackButton({ label: '🌎 Планеты', payload: { command: 'planet_control_multi' }, color: 'secondary' }).row()
-	.callbackButton({ label: '🌐 Корпорация', payload: { command: 'main_menu_corporation' }, color: 'secondary' }).row()
-	.callbackButton({ label: '🧪 Исследования', payload: { command: 'research_control' }, color: 'secondary' }).row()
+	keyboard.callbackButton({ label: `${smile_list.person.ico} Персонаж`, payload: { command: 'planet_control_multi' }, color: 'secondary' })
+	.callbackButton({ label: `${smile_list.corporation.ico} Корпорация`, payload: { command: 'main_menu_corporation' }, color: 'secondary' }).row()
+	.callbackButton({ label: `${smile_list.inventory.ico} Инвентарь`, payload: { command: 'planet_control_multi' }, color: 'secondary' })
+	.callbackButton({ label: `${smile_list.storehouse.ico} Склад`, payload: { command: 'main_menu_corporation' }, color: 'secondary' }).row()
+	.callbackButton({ label: `${smile_list.build.ico} Здания`, payload: { command: 'planet_control_multi' }, color: 'secondary' })
+	.callbackButton({ label: `${smile_list.persons.ico} Команда`, payload: { command: 'planet_control_multi' }, color: 'secondary' }).row()
+	.callbackButton({ label: '❌', payload: { command: 'main_menu_close' }, color: 'secondary' }).row()
+	.callbackButton({ label: `${smile_list.message.ico} В чат`, payload: { command: 'main_menu_corporation' }, color: 'secondary' })
 	.urlButton({ label: '🍻 Об игре', url: 'https://vk.com/@capital_galaxy-dobro-pozhalovat-v-mnogopolzovatelskuu-onlain-igru-s-ekonomi' }).row()
-	//.callbackButton({ label: '📈 Прибыль', payload: { command: 'income_control', stat: "health"  }, color: 'secondary' })
-	//.callbackButton({ label: '💰>⚡Биржа', payload: { command: 'exchange_control', stat: "health"  }, color: 'secondary' }).row()
-	.callbackButton({ label: '❌', payload: { command: 'main_menu_close' }, color: 'secondary' }).inline().oneTime() 
+	.callbackButton({ label: `${smile_list.research.ico} Исследовать`, payload: { command: 'main_menu_corporation' }, color: 'secondary' }).row().inline().oneTime() 
 	return [keyboard, event_logger]
 }
 export async function User_Menu_Show(context: Context, user: User) {

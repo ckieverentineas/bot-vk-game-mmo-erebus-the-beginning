@@ -226,6 +226,8 @@ vk.updates.on('message_event', async (context: Context, next: any) => {
 			trigger = await prisma.trigger.create({ data: { id_user: user.id, name: 'antiflud', value: false } })
 			console.log(`Init antiflud for user ${context.peerId}`)
 		}
+		//console.log(context)
+		await vk.api.messages.sendMessageEventAnswer({ event_id: context.eventId, peer_id: context.peerId, user_id: context.userId })
 	} catch (e) {
 		console.log(`Ошибка события ${e}`)
 	}
