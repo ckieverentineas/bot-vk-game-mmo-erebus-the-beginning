@@ -1,4 +1,4 @@
-import { vk } from "../../index";
+import { vk } from "../index";
 import { Keyboard, PhotoAttachment } from "vk-io";
 
 export function Sleep(ms: number) {

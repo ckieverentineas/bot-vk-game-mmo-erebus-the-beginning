@@ -1,14 +1,14 @@
-import { answerTimeLimit, timer_text } from "../../../";
-import prisma from "../../prisma";
+import { answerTimeLimit, timer_text } from "..";
+import prisma from "../module/prisma";
 import { Context, Keyboard, KeyboardBuilder } from "vk-io";
-import { Logger, Send_Message_Universal, /*Sleep*/ } from "../../../module/fab/helper";
-import { Printer_Person_Class, Selector_Person_Class } from "../../../datacenter/person";
-import { smile_list } from "../../../datacenter/icon_library";
-import { Printer_Person_Stat_Info } from "../../../datacenter/character";
-import { dialog_engine, DialogElement } from "../../../datacenter/dialog";
+import { Logger, Send_Message_Universal, /*Sleep*/ } from "../fab/helper";
+import { Printer_Person_Class, Selector_Person_Class } from "../datacenter/person";
+import { smile_list } from "../datacenter/icon_library";
+import { Printer_Person_Stat_Info } from "../datacenter/character";
+import { dialog_engine, DialogElement } from "../datacenter/dialog";
 import { User } from "@prisma/client";
-import { blueprint_database, BlueprintKey } from "../../../datacenter/blueprint";
-import { Randomizer_Float } from "../../../module/fab/random";
+import { Printer_Blueprint, Selector_Blueprint_By_System_Name } from "../datacenter/blueprint";
+import { Randomizer_Float } from "../fab/random";
 
 export async function User_Register(context: Context) {
     const account_temp = { name: null, class: 1 }
@@ -133,35 +133,47 @@ async function Event_Destruct_Escape_Pod(context: Context, user: User) {
     let resource_check = await prisma.resource.findFirst({ where: { id_user: user.id } })
     if (!resource_check) {
         resource_check = await prisma.resource.create({ data: { id_user: user.id, gold: gold_default, iron: iron_default, energy: energy_default } })
-        if (!resource_check) { return '' }
+        if (!resource_check) { return `${event_logger}\n\n ${smile_list.warn.ico} Произошла ошибка инициализации хранилища ресурсов` }
         event_logger += `${smile_list.gold.ico} Шекель: х${gold_default}\n${smile_list.iron.ico} Железо: х${iron_default}\n${smile_list.energy.ico} Энергия: х${energy_default}\n`
     }
     let ammo_check = await prisma.ammo.findFirst({ where: { id_user: user.id } })
     if (!ammo_check) {
         ammo_check = await prisma.ammo.create({ data: { id_user: user.id, ammo_turret: ammo_turret_default } })
-        if (!ammo_check) { return '' }
+        if (!ammo_check) { return `${event_logger}\n\n ${smile_list.warn.ico} Произошла ошибка инициализации хранилища патронов` }
         event_logger += `${smile_list.ammo.ico} Патроны для Турели: х${ammo_turret_default}\n`
     }
     // добавляем игроку чертежи строительства
-    const bp_mine_add = await prisma.blueprint.create({ data: { id_user: user.id, system_name: blueprint_database.mine.system_name, type: blueprint_database.mine.type, lvl: blueprint_database.mine.lvl } })
-    if (!bp_mine_add) { return event_logger }
+    const mine = await Selector_Blueprint_By_System_Name('mine')
+    if (!mine) { return `${event_logger}\n\n ${smile_list.warn.ico} чертеж [mine] не был найден` }
+    const bp_mine_add = await prisma.blueprint.create({ data: { id_user: user.id, system_name: mine.system_name, type: mine.type, lvl: mine.lvl } })
+    if (!bp_mine_add) { return `${event_logger}\n\n ${smile_list.warn.ico} чертеж [mine] не был добавлен` }
     event_logger += await Printer_Blueprint('mine')
-    const bp_fabricator_add = await prisma.blueprint.create({ data: { id_user: user.id, system_name: blueprint_database.fabricator.system_name, type: blueprint_database.fabricator.type, lvl: blueprint_database.fabricator.lvl } })
-    if (!bp_fabricator_add) { return event_logger }
+
+    const fabricator = await Selector_Blueprint_By_System_Name('fabricator')
+    if (!fabricator) { return `${event_logger}\n\n ${smile_list.warn.ico} чертеж [fabricator] не был найден` }
+    const bp_fabricator_add = await prisma.blueprint.create({ data: { id_user: user.id, system_name: fabricator.system_name, type: fabricator.type, lvl: fabricator.lvl } })
+    if (!bp_fabricator_add) { return `${event_logger}\n\n ${smile_list.warn.ico} чертеж [fabricator] не был добавлен` }
     event_logger += await Printer_Blueprint('fabricator')
-    const bp_base_add = await prisma.blueprint.create({ data: { id_user: user.id, system_name: blueprint_database.base.system_name, type: blueprint_database.base.type, lvl: blueprint_database.base.lvl } })
-    if (!bp_base_add) { return event_logger }
+
+    const base = await Selector_Blueprint_By_System_Name('base')
+    if (!base) { return `${event_logger}\n\n ${smile_list.warn.ico} чертеж [base] не был найден` }
+    const bp_base_add = await prisma.blueprint.create({ data: { id_user: user.id, system_name: base.system_name, type: base.type, lvl: base.lvl } })
+    if (!bp_base_add) { return `${event_logger}\n\n ${smile_list.warn.ico} чертеж [base] не был добавлен` }
     event_logger += await Printer_Blueprint('base')
-    const bp_turret_add = await prisma.blueprint.create({ data: { id_user: user.id, system_name: blueprint_database.turret.system_name, type: blueprint_database.turret.type, lvl: blueprint_database.turret.lvl } })
-    if (!bp_turret_add) { return event_logger }
+
+    const turret = await Selector_Blueprint_By_System_Name('turret')
+    if (!turret) { return `${event_logger}\n\n ${smile_list.warn.ico} чертеж [turret] не был найден` }
+    const bp_turret_add = await prisma.blueprint.create({ data: { id_user: user.id, system_name: turret.system_name, type: turret.type, lvl: turret.lvl } })
+    if (!bp_turret_add) { return `${event_logger}\n\n ${smile_list.warn.ico} чертеж [turret] не был добавлен` }
     event_logger += await Printer_Blueprint('turret')
-    const bp_cloning_station_add = await prisma.blueprint.create({ data: { id_user: user.id, system_name: blueprint_database.cloning_station.system_name, type: blueprint_database.cloning_station.type, lvl: blueprint_database.cloning_station.lvl } })
-    if (!bp_cloning_station_add) { return event_logger }
+
+    const cloning_station = await Selector_Blueprint_By_System_Name('cloning_station')
+    if (!cloning_station) { return `${event_logger}\n\n ${smile_list.warn.ico} чертеж [cloning_station] не был найден` }
+    const bp_cloning_station_add = await prisma.blueprint.create({ data: { id_user: user.id, system_name: cloning_station.system_name, type: cloning_station.type, lvl: cloning_station.lvl } })
+    if (!bp_cloning_station_add) { return `${event_logger}\n\n ${smile_list.warn.ico} чертеж [cloning_station] не был добавлен` }
     event_logger += await Printer_Blueprint('cloning_station')
+
     await Logger(`(destroyed escaped pod succes) - got resources and blueprints ~ by @${context.peerId}`)
     return event_logger
 }
 
-async function Printer_Blueprint(system_name: BlueprintKey) {
-    return `${smile_list.save.ico} Чертеж(B): ${blueprint_database[`${system_name}`].name}-${blueprint_database[`${system_name}`].lvl}: х1\n`
-}

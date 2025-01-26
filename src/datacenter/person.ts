@@ -1,8 +1,12 @@
+import { Person } from "@prisma/client";
 import { smile_list } from "./icon_library";
+
 
 export interface PersonClass {
     id: number;
+    smile: string;
     name: string;
+    system_name: string;
     description: string;
     skill_active: string;
     skill_passive: string;
@@ -18,11 +22,12 @@ export interface PersonClass {
     stealth: number;
 }
 
-export const person_class = [
+export const person_class: Array<PersonClass> = [
     { 
         id: 1, 
         smile: '⚓',
         name: 'Капитан', 
+        system_name: 'captain',
         description: 'Лидер команды, обладающий стратегическим мышлением и способностью вдохновлять других.', 
         skill_active: 'Тактическое командование: увеличивает эффективность команды в бою.', 
         skill_passive: 'Моральный дух: повышает мораль команды, уменьшая вероятность паники.', 
@@ -41,6 +46,7 @@ export const person_class = [
         id: 2, 
         smile: '🧭',
         name: 'Исследователь', 
+        system_name: 'explorer',
         description: 'Охотник за тайнами, стремящийся разгадать загадки и находить редкие артефакты.', 
         skill_active: 'Чувство приключения: увеличивает шансы на нахождение редких ресурсов.', 
         skill_passive: 'Разгадыватель тайн: позволяет быстрее решать головоломки.', 
@@ -59,6 +65,7 @@ export const person_class = [
         id: 3, 
         smile: '⚔️',
         name: 'Воин', 
+        system_name: 'warrior',
         description: 'Опытный боец, специализирующийся на ближнем бою и защите своей команды.', 
         skill_active: 'Мощный удар: увеличивает урон от атак в ближнем бою.', 
         skill_passive: 'Защитник: увеличивает защиту союзников в радиусе действия.', 
@@ -77,6 +84,7 @@ export const person_class = [
         id: 4, 
         smile: '🚀',
         name: 'Пилот', 
+        system_name: 'pilot',
         description: 'Эксперт в управлении космическими кораблями, способный маневрировать в бою.', 
         skill_active: 'Мастер маневров: увеличивает скорость и маневренность корабля.', 
         skill_passive: 'Точный выстрел: увеличивает вероятность попадания вражеских кораблей.', 
@@ -95,6 +103,7 @@ export const person_class = [
         id: 5, 
         smile: '🛠️',
         name: 'Инженер', 
+        system_name: 'engineer',
         description: 'Гений технологий и ремонта, способный создавать уникальные устройства.', 
         skill_active: 'Создатель: позволяет создавать уникальные устройства и модификации.', 
         skill_passive: 'Мастер на все руки: увеличивает скорость ремонта и эффективность использования ресурсов.', 
@@ -116,7 +125,7 @@ export async function Selector_Person_Class(id: number | string): Promise< Perso
 }
 
 // Функция для вывода информации о персонаже
-export function Printer_Person_Class(id: number): string {
+export async function Printer_Person_Class(id: number): Promise<string> {
     const character = person_class.find(person => person.id === id);
     if (!character) {
         return `Персонаж с ID ${id} не найден.`;
@@ -137,6 +146,12 @@ export function Printer_Person_Class(id: number): string {
         ${smile_list.intuition.ico} ${smile_list.intuition.name}: ${character.intuition}
         ${smile_list.psyche.ico} ${smile_list.psyche.name}: ${character.psyche}
         ${smile_list.stealth.ico} ${smile_list.stealth.name}: ${character.stealth}
+    `;
+}
+
+export async function Printer_Person_Self(character: Person): Promise<string> {
+
+    return `\n${smile_list.strength.ico} ${smile_list.strength.name}: ${character.strength}\n${smile_list.endurance.ico} ${smile_list.endurance.name}: ${character.endurance}\n${smile_list.health.ico} ${smile_list.health.name}: ${character.health}\n${smile_list.erudition.ico} ${smile_list.erudition.name}: ${character.erudition}\n${smile_list.charisma.ico} ${smile_list.charisma.name}: ${character.charisma}\n${smile_list.synchronization.ico} ${smile_list.synchronization.name}: ${character.synchronization}\n${smile_list.karma.ico} ${smile_list.karma.name}: ${character.karma}\n${smile_list.intuition.ico} ${smile_list.intuition.name}: ${character.intuition}\n${smile_list.psyche.ico} ${smile_list.psyche.name}: ${character.psyche}\n${smile_list.stealth.ico} ${smile_list.stealth.name}: ${character.stealth}
     `;
 }
 

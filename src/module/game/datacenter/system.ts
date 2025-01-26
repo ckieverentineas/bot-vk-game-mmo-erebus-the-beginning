@@ -1,1 +1,0 @@
-export const version_soft = 0.83
